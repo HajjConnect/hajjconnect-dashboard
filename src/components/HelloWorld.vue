@@ -1,7 +1,7 @@
 <template>
 <div class="container">
-  <!-- <img src="../assets/logo.png" alt="HajjConnect"> -->
-  <h1>HajjConnect - Operator Dashboard</h1>
+  <img src="../assets/logo.png" alt="HajjConnect" width="400px">
+  <h1>Operator Dashboard</h1>
   <sui-statistics-group :columns="3">
     <sui-statistic in-group>
       <sui-statistic-value>{{ nLost }}</sui-statistic-value>
@@ -43,7 +43,7 @@
     />
   </GmapMap>
   </div>
-  <sui-card-group :items-per-row="8" class="doubling" v-if="getPersons">
+  <sui-card-group :items-per-row="6" class="doubling" v-if="getPersons">
     <sui-card v-for="(person, index) in getPersons" :key="'person-' + index" :class="person.color" >
       <sui-dimmer-dimmable
         @mouseenter.native="cardActive = index"
