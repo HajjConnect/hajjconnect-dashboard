@@ -41,7 +41,7 @@
         @mouseleave.native="cardActive = null">
         <sui-image v-if="person.image" :src="person.image" size="medium"/>
         <sui-dimmer blurring :active="cardActive === index">
-          <sui-button icon="crosshairs">Locate</sui-button>
+          <sui-button icon="crosshairs" @click="toggleInfoWindow(person, index)">Locate</sui-button>
         </sui-dimmer>
       </sui-dimmer-dimmable>
       <sui-card-content>
