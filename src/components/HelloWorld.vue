@@ -13,14 +13,16 @@
     </sui-statistic>
     <sui-statistic in-group>
       <sui-statistic-value>{{ nRecover }}</sui-statistic-value>
-      <sui-statistic-label>Recovering</sui-statistic-label>
+      <sui-statistic-label>Found</sui-statistic-label>
     </sui-statistic>
   </sui-statistics-group>
+  <div class="container">
   <GmapMap
-    :center="center"
-    :zoom="7"
-    map-type-id="terrain"
-    style="width: 500px; height: 300px"
+    :center="getPersons[0].position"
+    :zoom="18"
+    map-type-id="roadmap"
+    style="width: 100%; height: 300px"
+    v-if="getPersons.length > 0"
   >
       <gmap-info-window :options="infoOptions" :position="infoWindowPos" :opened="infoWinOpen" @closeclick="infoWinOpen=false">
         {{infoContent}}
@@ -33,24 +35,31 @@
       :draggable="false"
       @click="toggleInfoWindow(m,index)"
     />
+    <GmapCircle
+      :key="'circle-'+ index"
+      v-for="(m, index) in getPersons"
+      :radius="m.radius"
+      :center="m.position"
+    />
   </GmapMap>
-  <sui-card-group :items-per-row="4" class="doubling" v-if="getPersons">
+  </div>
+  <sui-card-group :items-per-row="8" class="doubling" v-if="getPersons">
     <sui-card v-for="(person, index) in getPersons" :key="'person-' + index" :class="person.color" >
       <sui-dimmer-dimmable
         @mouseenter.native="cardActive = index"
         @mouseleave.native="cardActive = null">
-        <sui-image v-if="person.image" :src="person.image" size="medium"/>
+        <sui-image v-if="person.image" :src="person.image" size="large"/>
         <sui-dimmer blurring :active="cardActive === index">
           <sui-button icon="crosshairs" @click="toggleInfoWindow(person, index)">Locate</sui-button>
         </sui-dimmer>
       </sui-dimmer-dimmable>
       <sui-card-content>
         <sui-card-header>{{ person.name }}</sui-card-header>
-        <sui-card-meta>{{ person.gender }}, {{ person.country }}</sui-card-meta>
+        <sui-card-meta>from {{ person.country }}</sui-card-meta>
         <sui-card-description v-if="person.description">{{ person.description }}</sui-card-description>
       </sui-card-content>
       <sui-card-content extra >
-        <sui-icon name="marker" />{{ person.status }}
+        <sui-icon :name="person.gender" />{{ person.status }}
       </sui-card-content>
     </sui-card>
   </sui-card-group>
@@ -61,6 +70,7 @@
 <script>
 import { rows } from 'google-spreadsheets'
 import { promisify } from 'bluebird'
+const plott = require('plott-quality-distance')
 
 const getRows = promisify(rows)
 const sheetId = '1beMhjygRYfRXI3Xi0QP7g5kExmrc8CzrivIdw0I6LUo'
@@ -78,10 +88,10 @@ export default {
         { text: 'City alphabetical', value: 'city' },
         { text: 'Ladies first', value: 'female' }
       ],
-      center: {
-        lat: 47.376332,
-        lng: 8.547511
-      },
+      // center: {
+      //   lat: 47.376332,
+      //   lng: 8.547511
+      // },
       infoContent: '',
       infoWindowPos: null,
       infoWinOpen: false,
@@ -108,7 +118,7 @@ export default {
           case 'at risk':
             item.color = 'yellow'
             break
-          case 'recovering':
+          case 'found':
             item.color = 'green'
         }
         return {
@@ -116,7 +126,8 @@ export default {
           position: {
             lng: Number(item.longitude),
             lat: Number(item.latitude)
-          }
+          },
+          radius: plott(Number(item.rssi), 30)
         }
       })
       this.isLoaded = true
@@ -130,7 +141,7 @@ export default {
       return this.persons.map(item => item.status).filter(value => value === 'at risk').length
     },
     nRecover () {
-      return this.persons.map(item => item.status).filter(value => value === 'recovering').length
+      return this.persons.map(item => item.status).filter(value => value === 'found').length
     },
     getPersons () {
       let persons = this.persons.filter((person) => {
@@ -163,7 +174,7 @@ export default {
   methods: {
     toggleInfoWindow (marker, idx) {
       this.infoWindowPos = marker.position;
-      this.infoContent = marker.name;
+      this.infoContent = `${marker.name} (${marker.status})`;
 
       //check if its the same marker that was selected if yes toggle
       if (this.currentMidx == idx) {

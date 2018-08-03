@@ -10,6 +10,7 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "google-spreadsheets": "^2.0.0",
+    "plott-quality-distance": "^0.0.1",
     "semantic-ui-vue": "^0.2.11",
     "vue": "^2.5.16",
     "vue2-google-maps": "^0.10.1"

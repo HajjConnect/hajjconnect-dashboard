@@ -4911,6 +4911,16 @@ pkg-dir@^2.0.0:
   dependencies:
     find-up "^2.1.0"
 
+plott-quality-distance@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/plott-quality-distance/-/plott-quality-distance-0.0.1.tgz#0891b5be97c13ad13ed19030f5ab808393ea5445"
+  dependencies:
+    plott-rssi-quality "0.0.1"
+
+plott-rssi-quality@0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/plott-rssi-quality/-/plott-rssi-quality-0.0.1.tgz#a6e367af78debd9f3905faaa7e0113df5d666677"
+
 pluralize@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/pluralize/-/pluralize-7.0.0.tgz#298b89df8b93b0221dbf421ad2b1b1ea23fc6777"
