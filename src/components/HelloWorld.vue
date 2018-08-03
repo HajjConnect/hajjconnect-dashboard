@@ -35,7 +35,7 @@
     />
   </GmapMap>
   <sui-card-group :items-per-row="4" class="doubling" v-if="getPersons">
-    <sui-card v-for="(person, index) in getPersons" :key="'person-' + index" :class="person.regionColor" >
+    <sui-card v-for="(person, index) in getPersons" :key="'person-' + index" :class="person.color" >
       <sui-dimmer-dimmable
         @mouseenter.native="cardActive = index"
         @mouseleave.native="cardActive = null">
@@ -101,6 +101,16 @@ export default {
       worksheet: 1
     }).then(res => {
       this.persons = res.map(item => {
+        switch (item.status) {
+          case 'lost':
+            item.color = 'red'
+            break
+          case 'at risk':
+            item.color = 'yellow'
+            break
+          case 'recovering':
+            item.color = 'green'
+        }
         return {
           ...item, 
           position: {
